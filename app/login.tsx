@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 export default function LoginScreen() {
@@ -77,6 +78,9 @@ export default function LoginScreen() {
                 >
                     <Text style={styles.signInButtonText}>Sign In</Text>
                 </Pressable>
+                <Link href="/register" style={styles.registerLink}>
+    Create a new account
+</Link>
             </View>
         </View>
     );
@@ -174,5 +178,11 @@ const styles = StyleSheet.create({
         fontSize: 13,
         marginTop: 12,
     },
-
+registerLink: {
+    marginTop: 22,
+    color: "#5145E5",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+},
 });
