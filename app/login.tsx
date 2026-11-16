@@ -1,8 +1,29 @@
 import { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 export default function LoginScreen() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
+
+    const handleSignIn = () => {
+        const cleanEmail = email.trim();
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+            setError("Please enter a valid email address.");
+            setMessage("");
+            return;
+        }
+
+        if (password.trim().length === 0) {
+            setError("Password is required.");
+            setMessage("");
+            return;
+        }
+
+        setError("");
+        setMessage("Form validated. Demo login is not connected yet.");
+    };
 
     return (
         <View style={styles.container}>
@@ -42,7 +63,20 @@ export default function LoginScreen() {
                     value={password}
                     onChangeText={setPassword}
                 />
+                {error ? (
+                    <Text style={styles.errorText}>{error}</Text>
+                ) : null}
 
+                {message ? (
+                    <Text style={styles.successText}>{message}</Text>
+                ) : null}
+
+                <Pressable
+                    style={styles.signInButton}
+                    onPress={handleSignIn}
+                >
+                    <Text style={styles.signInButtonText}>Sign In</Text>
+                </Pressable>
             </View>
         </View>
     );
@@ -116,4 +150,29 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#111827",
     },
+
+    signInButton: {
+        backgroundColor: "#5145E5",
+        height: 56,
+        borderRadius: 14,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 28,
+    },
+    signInButtonText: {
+        color: "#FFFFFF",
+        fontSize: 18,
+        fontWeight: "700",
+    },
+    errorText: {
+        color: "#DC2626",
+        fontSize: 13,
+        marginTop: 12,
+    },
+    successText: {
+        color: "#16803C",
+        fontSize: 13,
+        marginTop: 12,
+    },
+
 });
