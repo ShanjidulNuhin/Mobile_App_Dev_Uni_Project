@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 export default function LoginScreen() {
@@ -6,6 +6,10 @@ export default function LoginScreen() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
+    const router = useRouter();
+const { registered } = useLocalSearchParams<{
+  registered?: string;
+}>();
 
     const handleSignIn = () => {
         const cleanEmail = email.trim();
@@ -22,8 +26,20 @@ export default function LoginScreen() {
             return;
         }
 
-        setError("");
-        setMessage("Form validated. Demo login is not connected yet.");
+       
+if (
+  cleanEmail.toLowerCase() === "moderator@pathsathi.test" &&
+  password === "Demo1234"
+) {
+  setError("");
+  setMessage("");
+  router.replace("/moderator");
+  return;
+}
+
+setError("Only the Moderator demo account is available.");
+setMessage("");
+
     };
 
     return (
@@ -42,6 +58,12 @@ export default function LoginScreen() {
                 <Text style={styles.description}>
                     Sign in to your account
                 </Text>
+
+                {registered === "1" && (
+  <Text style={styles.successText}>
+    Registration successful. Please sign in.
+  </Text>
+)}
 
                 <Text style={styles.label}>Email</Text>
                 <TextInput

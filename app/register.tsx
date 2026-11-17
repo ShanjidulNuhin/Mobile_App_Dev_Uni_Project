@@ -1,5 +1,5 @@
 
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
     Pressable,
@@ -20,11 +20,11 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<Role>("Student");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+//   const [success, setSuccess] = useState("");
+  const router = useRouter();
 
   const handleRegister = () => {
     setError("");
-    setSuccess("");
 
     if (fullName.trim().length < 2) {
       setError("Please enter your full name.");
@@ -53,9 +53,13 @@ export default function RegisterScreen() {
       return;
     }
 
-    setSuccess(
-      `${role} registration form validated successfully!`
-    );
+    // setSuccess(
+    //   `${role} registration form validated successfully!`
+    // );
+    router.replace({
+  pathname: "/login",
+  params: { registered: "1" },
+});
   };
 
   return (
@@ -150,9 +154,9 @@ export default function RegisterScreen() {
           <Text style={styles.error}>{error}</Text>
         ) : null}
 
-        {success ? (
+        {/* {success ? (
           <Text style={styles.success}>{success}</Text>
-        ) : null}
+        ) : null} */}
 
         <Pressable
           style={styles.submitButton}
