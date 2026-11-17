@@ -1,3 +1,4 @@
+import { useDemoAuth } from "@/context/demo-auth";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
@@ -7,6 +8,7 @@ export default function LoginScreen() {
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
     const router = useRouter();
+    const { authenticate } = useDemoAuth();
 const { registered } = useLocalSearchParams<{
   registered?: string;
 }>();
@@ -27,15 +29,26 @@ const { registered } = useLocalSearchParams<{
         }
 
        
-if (
-  cleanEmail.toLowerCase() === "moderator@pathsathi.test" &&
-  password === "Demo1234"
-) {
-  setError("");
+
+const signedInRole = authenticate(cleanEmail, password);
+
+if (!signedInRole) {
+  setError("Invalid demo credentials. Please register first.");
   setMessage("");
+  return;
+}
+
+setError("");
+
+if (signedInRole === "Moderator") {
   router.replace("/moderator");
   return;
 }
+
+setMessage(
+  `${signedInRole} login successful. This role's dashboard is not built in the Moderator demo.`
+);
+
 
 setError("Only the Moderator demo account is available.");
 setMessage("");
