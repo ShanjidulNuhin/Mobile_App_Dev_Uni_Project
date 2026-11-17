@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
 });
-function registerAccount(arg0: { fullName: string; email: string; password: string; role: Role; }) {
-    throw new Error("Function not implemented.");
-}
+// function registerAccount(arg0: { fullName: string; email: string; password: string; role: Role; }) {
+//     throw new Error("Function not implemented.");
+//}
 

@@ -1,13 +1,15 @@
 
 import {
-    createContext,
-    useContext,
-    useState,
-    type PropsWithChildren,
+  createContext,
+  useContext,
+  useState,
+  type PropsWithChildren,
 } from "react";
 
+// Supported user roles
 export type Role = "Student" | "Tutor" | "Moderator";
 
+// Demo account structure
 type Account = {
   fullName: string;
   email: string;
@@ -15,53 +17,94 @@ type Account = {
   role: Role;
 };
 
+// Authentication context structure
 type AuthContextValue = {
   registerAccount: (account: Account) => void;
   authenticate: (email: string, password: string) => Role | null;
+  currentRole: Role | null;
+  logout: () => void;
 };
 
+// Create authentication context
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function DemoAuthProvider({ children }: PropsWithChildren) {
+// Authentication provider
+export function DemoAuthProvider({
+  children,
+}: PropsWithChildren) {
+  // Store the most recently registered demo account
   const [account, setAccount] = useState<Account | null>(null);
 
+  // Track the currently logged-in user's role
+  const [currentRole, setCurrentRole] = useState<Role | null>(null);
+
+  // Register a new demo account
   const registerAccount = (newAccount: Account) => {
-    setAccount(newAccount);
+    setAccount({
+      ...newAccount,
+      email: newAccount.email.trim().toLowerCase(),
+    });
   };
 
-  const authenticate = (email: string, password: string): Role | null => {
+  // Authenticate a user
+  const authenticate = (
+    email: string,
+    password: string
+  ): Role | null => {
     const normalizedEmail = email.trim().toLowerCase();
 
+    let matchedRole: Role | null = null;
+
+    // Built-in Moderator demo account
     if (
       normalizedEmail === "moderator@pathsathi.test" &&
       password === "Demo1234"
     ) {
-      return "Moderator";
+      matchedRole = "Moderator";
     }
 
-    if (
+    // Check registered demo account
+    else if (
       account &&
       account.email.toLowerCase() === normalizedEmail &&
       account.password === password
     ) {
-      return account.role;
+      matchedRole = account.role;
     }
 
-    return null;
+    // Update the active login session
+    setCurrentRole(matchedRole);
+
+    return matchedRole;
+  };
+
+  // Log out the current user
+  const logout = () => {
+    setCurrentRole(null);
   };
 
   return (
-    <AuthContext.Provider value={{ registerAccount, authenticate }}>
+    <AuthContext.Provider
+      value={{
+        registerAccount,
+        authenticate,
+        currentRole,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useDemoAuth() {
+// Custom hook to access authentication
+export function useDemoAuth(): AuthContextValue {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("DemoAuthProvider is missing.");
+    throw new Error(
+      "useDemoAuth must be used inside DemoAuthProvider."
+    );
   }
 
   return context;
