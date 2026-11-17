@@ -1,4 +1,4 @@
-import { type Role } from "@/context/demo-auth";
+import { type Role, useDemoAuth } from "@/context/demo-auth";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, } from "react-native";
@@ -15,6 +15,7 @@ export default function RegisterScreen() {
     const [error, setError] = useState("");
     //   const [success, setSuccess] = useState("");
     const router = useRouter();
+    const { registerAccount } = useDemoAuth();
 
     const handleRegister = () => {
         setError("");
@@ -50,11 +51,11 @@ export default function RegisterScreen() {
         //   `${role} registration form validated successfully!`
         // );
         registerAccount({
-  fullName: fullName.trim(),
-  email: email.trim().toLowerCase(),
-  password,
-  role,
-});
+            fullName: fullName.trim(),
+            email: email.trim().toLowerCase(),
+            password,
+            role,
+        });
         router.replace({
             pathname: "/login",
             params: { registered: "1" },
@@ -287,3 +288,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
 });
+function registerAccount(arg0: { fullName: string; email: string; password: string; role: Role; }) {
+    throw new Error("Function not implemented.");
+}
+

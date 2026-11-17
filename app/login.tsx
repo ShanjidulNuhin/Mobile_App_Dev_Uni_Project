@@ -50,8 +50,8 @@ setMessage(
 );
 
 
-setError("Only the Moderator demo account is available.");
-setMessage("");
+// setError("Only the Moderator demo account is available.");
+// setMessage("");
 
     };
 
