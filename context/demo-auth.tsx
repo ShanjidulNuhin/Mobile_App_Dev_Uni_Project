@@ -15,10 +15,17 @@ type Account = {
   role: Role;
 };
 
+export type SignedInUser = {
+  fullName: string;
+  email: string;
+  role: Role;
+};
+
 type AuthContextValue = {
   registerAccount: (account: Account) => void;
   authenticate: (email: string, password: string) => Role | null;
   currentRole: Role | null;
+  currentUser: SignedInUser | null;
   logout: () => void;
 };
 
@@ -28,11 +35,14 @@ export function DemoAuthProvider({
   children,
 }: PropsWithChildren) {
   const [account, setAccount] = useState<Account | null>(null);
-  const [currentRole, setCurrentRole] = useState<Role | null>(null);
+
+  const [currentUser, setCurrentUser] =
+    useState<SignedInUser | null>(null);
 
   const registerAccount = (newAccount: Account) => {
     setAccount({
       ...newAccount,
+      fullName: newAccount.fullName.trim(),
       email: newAccount.email.trim().toLowerCase(),
     });
   };
@@ -43,28 +53,36 @@ export function DemoAuthProvider({
   ): Role | null => {
     const normalizedEmail = email.trim().toLowerCase();
 
-    let matchedRole: Role | null = null;
+    let signedIn: SignedInUser | null = null;
 
     if (
       normalizedEmail === "moderator@pathsathi.test" &&
       password === "Demo1234"
     ) {
-      matchedRole = "Moderator";
+      signedIn = {
+        fullName: "Demo Moderator",
+        email: normalizedEmail,
+        role: "Moderator",
+      };
     } else if (
       account &&
-      account.email.toLowerCase() === normalizedEmail &&
+      account.email === normalizedEmail &&
       account.password === password
     ) {
-      matchedRole = account.role;
+      signedIn = {
+        fullName: account.fullName,
+        email: account.email,
+        role: account.role,
+      };
     }
 
-    setCurrentRole(matchedRole);
+    setCurrentUser(signedIn);
 
-    return matchedRole;
+    return signedIn?.role ?? null;
   };
 
   const logout = () => {
-    setCurrentRole(null);
+    setCurrentUser(null);
   };
 
   return (
@@ -72,7 +90,8 @@ export function DemoAuthProvider({
       value={{
         registerAccount,
         authenticate,
-        currentRole,
+        currentRole: currentUser?.role ?? null,
+        currentUser,
         logout,
       }}
     >

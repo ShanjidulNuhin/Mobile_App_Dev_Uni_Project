@@ -1,7 +1,10 @@
-
 import { useReports } from "@/context/reports";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import {
+  useLocalSearchParams,
+  useRouter
+} from "expo-router";
+
+import { useEffect, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -11,20 +14,40 @@ import {
   View,
 } from "react-native";
 
-type Filter = "Open" | "Processed" | "All";
+type Filter =
+  | "Open"
+  | "Processed"
+  | "Escalated"
+  | "All";
+
+const FILTERS: Filter[] = [
+  "Open",
+  "Processed",
+  "Escalated",
+  "All",
+];
 
 export default function ReportsScreen() {
   const { reports } = useReports();
   const router = useRouter();
+  const { filter: requestedFilter } =
+  useLocalSearchParams<{ filter?: string }>();
   const [filter, setFilter] = useState<Filter>("Open");
   const [search, setSearch] = useState("");
-
+  useEffect(() => {
+  if (
+    requestedFilter &&
+    FILTERS.includes(requestedFilter as Filter)
+  ) {
+    setFilter(requestedFilter as Filter);
+  }
+}, [requestedFilter]);
   const visibleReports = reports.filter((report) => {
     const matchesStatus =
-      filter === "All" ||
-      (filter === "Open"
-        ? report.status === "Open"
-        : report.status !== "Open");
+  filter === "All" ||
+  (filter === "Open" && report.status === "Open") ||
+  (filter === "Processed" && report.status !== "Open") ||
+  (filter === "Escalated" && report.status === "Escalated");
 
     const matchesSearch =
       `${report.id} ${report.title} ${report.category}`
@@ -52,7 +75,7 @@ export default function ReportsScreen() {
       />
 
       <View style={styles.filters}>
-        {(["Open", "Processed", "All"] as const).map((item) => (
+        {FILTERS.map((item) => (
           <Pressable
             key={item}
             style={[
@@ -120,7 +143,7 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 16,
   },
-  filters: { flexDirection: "row", gap: 8, marginBottom: 20 },
+  filters: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 20 },
   filter: {
     paddingVertical: 10,
     paddingHorizontal: 14,
