@@ -127,7 +127,7 @@ export default function ModeratorDashboard() {
       <View style={styles.wrapper}>
         <View style={styles.welcomeSection}>
           <Text style={styles.welcomeText}>
-            Welcome back,
+            Welcome,
           </Text>
 
           <Text style={styles.userName}>
