@@ -1,15 +1,9 @@
-import { useDemoAuth } from "@/context/demo-auth";
-import { Redirect } from "expo-router";
+
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
 
 export default function ModeratorTabsLayout() {
   return (
-    const { currentRole } = useDemoAuth();
-
-if (currentRole !== "Moderator") {
-  return <Redirect href="/login" />;
-}
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -26,7 +20,11 @@ if (currentRole !== "Moderator") {
         options={{
           title: "Overview",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
+            <Ionicons
+              name="home-outline"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
@@ -36,7 +34,11 @@ if (currentRole !== "Moderator") {
         options={{
           title: "Verify",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="checkmark-circle-outline" size={size} color={color} />
+            <Ionicons
+              name="checkmark-circle-outline"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
@@ -46,7 +48,11 @@ if (currentRole !== "Moderator") {
         options={{
           title: "Reports",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="flag-outline" size={size} color={color} />
+            <Ionicons
+              name="flag-outline"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
@@ -56,7 +62,11 @@ if (currentRole !== "Moderator") {
         options={{
           title: "History",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="time-outline" size={size} color={color} />
+            <Ionicons
+              name="time-outline"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />

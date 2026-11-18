@@ -1,9 +1,10 @@
-
 import ModulePage from "@/components/moderator/module-page";
+import { useDemoAuth } from "@/context/demo-auth";
 import { useModeration } from "@/context/moderation";
 import { useReports } from "@/context/reports";
 
 export default function ModeratorDashboard() {
+  const { logout } = useDemoAuth();
   const { tutors, history } = useModeration();
   const { reports, reportHistory } = useReports();
 
@@ -19,6 +20,8 @@ export default function ModeratorDashboard() {
 
   return (
     <ModulePage
+    actionLabel="npx.cmd expo start --clearLogout"
+      onAction={logout}
       title="Moderator Dashboard"
       subtitle="Welcome to the PathSathi moderation panel."
       items={[

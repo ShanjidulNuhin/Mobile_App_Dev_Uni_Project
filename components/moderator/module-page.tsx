@@ -1,4 +1,12 @@
-import { StyleSheet } from "react-native";
+
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
 type Item = {
   title: string;
   description: string;
@@ -19,6 +27,44 @@ export default function ModulePage({
   actionLabel,
   onAction,
 }: Props) {
+  return (
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={styles.content}
+    >
+      <View style={styles.wrapper}>
+        <Text style={styles.title}>{title}</Text>
+
+        <Text style={styles.subtitle}>
+          {subtitle}
+        </Text>
+
+        {onAction && (
+          <Pressable
+            style={styles.actionButton}
+            onPress={onAction}
+          >
+            <Text style={styles.actionText}>
+              {actionLabel ?? "Action"}
+            </Text>
+          </Pressable>
+        )}
+
+        {items.map((item, index) => (
+          <View key={index} style={styles.card}>
+            <Text style={styles.cardTitle}>
+              {item.title}
+            </Text>
+
+            <Text style={styles.cardDescription}>
+              {item.description}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
+  );
+}
 
 const styles = StyleSheet.create({
   screen: {
@@ -46,6 +92,21 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 24,
   },
+  actionButton: {
+    alignSelf: "flex-end",
+    borderWidth: 1,
+    borderColor: "#DCE1E8",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    marginBottom: 20,
+  },
+  actionText: {
+    color: "#DC2626",
+    fontSize: 14,
+    fontWeight: "600",
+  },
   card: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
@@ -65,4 +126,4 @@ const styles = StyleSheet.create({
     marginTop: 8,
     lineHeight: 21,
   },
-});}
+});
