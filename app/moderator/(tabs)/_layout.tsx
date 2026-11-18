@@ -1,9 +1,15 @@
-
+import { useDemoAuth } from "@/context/demo-auth";
+import { Redirect } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
 
 export default function ModeratorTabsLayout() {
   return (
+    const { currentRole } = useDemoAuth();
+
+if (currentRole !== "Moderator") {
+  return <Redirect href="/login" />;
+}
     <Tabs
       screenOptions={{
         headerShown: false,

@@ -1,6 +1,4 @@
-
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-
+import { StyleSheet } from "react-native";
 type Item = {
   title: string;
   description: string;
@@ -10,30 +8,17 @@ type Props = {
   title: string;
   subtitle: string;
   items: Item[];
+  actionLabel?: string;
+  onAction?: () => void;
 };
 
-export default function ModulePage({ title, subtitle, items }: Props) {
-  return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.content}
-    >
-      <View style={styles.wrapper}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
-
-        {items.map((item, index) => (
-          <View key={index} style={styles.card}>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.cardDescription}>
-              {item.description}
-            </Text>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
-  );
-}
+export default function ModulePage({
+  title,
+  subtitle,
+  items,
+  actionLabel,
+  onAction,
+}: Props) {
 
 const styles = StyleSheet.create({
   screen: {
@@ -80,4 +65,4 @@ const styles = StyleSheet.create({
     marginTop: 8,
     lineHeight: 21,
   },
-});
+});}

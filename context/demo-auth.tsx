@@ -47,36 +47,35 @@ export function DemoAuthProvider({
   };
 
   // Authenticate a user
-  const authenticate = (
-    email: string,
-    password: string
-  ): Role | null => {
-    const normalizedEmail = email.trim().toLowerCase();
 
-    let matchedRole: Role | null = null;
+const authenticate = (email: string, password: string): Role | null => {
+  const normalizedEmail = email.trim().toLowerCase();
 
-    // Built-in Moderator demo account
-    if (
-      normalizedEmail === "moderator@pathsathi.test" &&
-      password === "Demo1234"
-    ) {
-      matchedRole = "Moderator";
-    }
+  let matchedRole: Role | null = null;
 
-    // Check registered demo account
-    else if (
-      account &&
-      account.email.toLowerCase() === normalizedEmail &&
-      account.password === password
-    ) {
-      matchedRole = account.role;
-    }
+  if (
+    normalizedEmail === "moderator@pathsathi.test" &&
+    password === "Demo1234"
+  ) {
+    matchedRole = "Moderator";
+  } else if (
+    account &&
+    account.email.toLowerCase() === normalizedEmail &&
+    account.password === password
+  ) {
+    matchedRole = account.role;
+  }
 
-    // Update the active login session
+  if (matchedRole) {
     setCurrentRole(matchedRole);
+  }
 
-    return matchedRole;
-  };
+  return matchedRole;
+};
+
+const logout = () => {
+  setCurrentRole(null);
+};
 
   // Log out the current user
   const logout = () => {
@@ -85,12 +84,7 @@ export function DemoAuthProvider({
 
   return (
     <AuthContext.Provider
-      value={{
-        registerAccount,
-        authenticate,
-        currentRole,
-        logout,
-      }}
+  value={{ registerAccount, authenticate, currentRole, logout }}
     >
       {children}
     </AuthContext.Provider>
