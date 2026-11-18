@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 
-type Filter = "Open" | "Resolved" | "All";
+type Filter = "Open" | "Processed" | "All";
 
 export default function ReportsScreen() {
   const { reports } = useReports();
@@ -52,7 +52,7 @@ export default function ReportsScreen() {
       />
 
       <View style={styles.filters}>
-        {(["Open", "Resolved", "All"] as const).map((item) => (
+        {(["Open", "Processed", "All"] as const).map((item) => (
           <Pressable
             key={item}
             style={[

@@ -1,9 +1,9 @@
 
 import {
-    createContext,
-    useContext,
-    useState,
-    type PropsWithChildren,
+  createContext,
+  useContext,
+  useState,
+  type PropsWithChildren,
 } from "react";
 
 export type TutorStatus = "Pending" | "Approved" | "Rejected";
@@ -24,6 +24,7 @@ export type ModerationRecord = {
   action: "Approved" | "Rejected";
   reason: string;
   date: string;
+  timestamp: number;
 };
 
 type ModerationContextType = {
@@ -100,6 +101,7 @@ export function ModerationProvider({
         action,
         reason,
         date: new Date().toLocaleString(),
+        timestamp: Date.now(),
       },
       ...previous,
     ]);

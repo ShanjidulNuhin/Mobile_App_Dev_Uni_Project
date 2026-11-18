@@ -7,21 +7,28 @@ export default function ModerationHistory() {
   const { history } = useModeration();
   const { reportHistory } = useReports();
 
-  const tutorItems = history.map((record) => ({
-    title: `${record.action}: ${record.name}`,
-    description:
-      `Tutor Verification | ${record.date}` +
-      (record.reason ? `\nReason: ${record.reason}` : ""),
-  }));
+ const tutorItems = history.map((record) => ({
+  title: `${record.action}: ${record.name}`,
+  description:
+    `Tutor Verification | ${record.date}` +
+    (record.reason ? `\nReason: ${record.reason}` : ""),
+  timestamp: record.timestamp,
+}));
 
   const reportItems = reportHistory.map((record) => ({
-    title: `${record.decision}: ${record.title}`,
-    description:
-      `Report ${record.reportId} | ${record.date}` +
-      (record.reason ? `\nReason: ${record.reason}` : ""),
-  }));
+  title: `${record.decision}: ${record.title}`,
+  description:
+    `Report ${record.reportId} | ${record.date}` +
+    (record.reason ? `\nReason: ${record.reason}` : ""),
+  timestamp: record.timestamp,
+}));
 
-  const allItems = [...reportItems, ...tutorItems];
+  const allItems = [...reportItems, ...tutorItems]
+  .sort((a, b) => b.timestamp - a.timestamp)
+  .map(({ title, description }) => ({
+    title,
+    description,
+  }));;
 
   return (
     <ModulePage

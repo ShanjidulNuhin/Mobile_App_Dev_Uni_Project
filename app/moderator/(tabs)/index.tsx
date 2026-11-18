@@ -20,7 +20,7 @@ export default function ModeratorDashboard() {
 
   return (
     <ModulePage
-    actionLabel="npx.cmd expo start --clearLogout"
+    actionLabel="Log Out"
       onAction={logout}
       title="Moderator Dashboard"
       subtitle="Welcome to the PathSathi moderation panel."

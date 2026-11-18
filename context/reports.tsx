@@ -1,9 +1,9 @@
 
 import {
-    createContext,
-    useContext,
-    useState,
-    type PropsWithChildren,
+  createContext,
+  useContext,
+  useState,
+  type PropsWithChildren,
 } from "react";
 
 export type ReportDecision =
@@ -24,6 +24,7 @@ export type Report = {
 };
 
 export type ReportLog = {
+  timestamp: any;
   id: string;
   reportId: string;
   title: string;
@@ -96,6 +97,7 @@ export function ReportsProvider({ children }: PropsWithChildren) {
         decision,
         reason,
         date: new Date().toLocaleString(),
+        timestamp: Date.now(),
       },
       ...current,
     ]);
