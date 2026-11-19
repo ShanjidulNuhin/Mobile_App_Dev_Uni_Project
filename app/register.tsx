@@ -54,6 +54,7 @@ export default function RegisterScreen() {
         //   `${role} registration form validated successfully!`
         // );
 
+
         try {
             await registerAccount({
                 fullName: fullName.trim(),
@@ -70,14 +71,10 @@ export default function RegisterScreen() {
             setError(
                 error instanceof Error
                     ? error.message
-                    : "Registration failed."
+                    : "Unable to save your account."
             );
         }
 
-        router.replace({
-            pathname: "/login",
-            params: { registered: "1" },
-        });
     };
 
     return (

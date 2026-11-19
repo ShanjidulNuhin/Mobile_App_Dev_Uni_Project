@@ -105,10 +105,24 @@ export function DemoAuthProvider({
       },
     ];
 
+
     await SecureStore.setItemAsync(
       STORAGE_KEY,
       JSON.stringify(updatedAccounts)
     );
+
+    const savedData = await SecureStore.getItemAsync(
+      STORAGE_KEY
+    );
+
+    if (!savedData) {
+      throw new Error(
+        "Account could not be verified in device storage."
+      );
+    }
+
+    setAccounts(updatedAccounts);
+
 
     setAccounts(updatedAccounts);
   };
