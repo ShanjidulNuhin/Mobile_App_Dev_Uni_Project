@@ -8,13 +8,17 @@ export default function LoginScreen() {
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
     const router = useRouter();
-    const { authenticate } = useDemoAuth();
-const { registered } = useLocalSearchParams<{
-  registered?: string;
-}>();
+    const { authenticate, authReady } = useDemoAuth();
+    const { registered } = useLocalSearchParams<{
+        registered?: string;
+    }>();
 
     const handleSignIn = () => {
         const cleanEmail = email.trim();
+        if (!authReady) {
+            setError("Please wait while saved accounts load.");
+            return;
+        }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
             setError("Please enter a valid email address.");
@@ -28,30 +32,30 @@ const { registered } = useLocalSearchParams<{
             return;
         }
 
-       
-
-const signedInRole = authenticate(cleanEmail, password);
-
-if (!signedInRole) {
-  setError("Invalid demo credentials. Please register first.");
-  setMessage("");
-  return;
-}
-
-setError("");
-
-if (signedInRole === "Moderator") {
-  router.replace("/moderator");
-  return;
-}
-
-setMessage(
-  `${signedInRole} login successful. This role's dashboard is not built in the Moderator demo.`
-);
 
 
-// setError("Only the Moderator demo account is available.");
-// setMessage("");
+        const signedInRole = authenticate(cleanEmail, password);
+
+        if (!signedInRole) {
+            setError("Invalid demo credentials. Please register first.");
+            setMessage("");
+            return;
+        }
+
+        setError("");
+
+        if (signedInRole === "Moderator") {
+            router.replace("/moderator");
+            return;
+        }
+
+        setMessage(
+            `${signedInRole} login successful. This role's dashboard is not built in the Moderator demo.`
+        );
+
+
+        // setError("Only the Moderator demo account is available.");
+        // setMessage("");
 
     };
 
@@ -73,10 +77,10 @@ setMessage(
                 </Text>
 
                 {registered === "1" && (
-  <Text style={styles.successText}>
-    Registration successful. Please sign in.
-  </Text>
-)}
+                    <Text style={styles.successText}>
+                        Registration successful. Please sign in.
+                    </Text>
+                )}
 
                 <Text style={styles.label}>Email</Text>
                 <TextInput
@@ -107,15 +111,23 @@ setMessage(
                     <Text style={styles.successText}>{message}</Text>
                 ) : null}
 
+
                 <Pressable
-                    style={styles.signInButton}
+                    style={[
+                        styles.signInButton,
+                        !authReady && { opacity: 0.5 },
+                    ]}
                     onPress={handleSignIn}
+                    disabled={!authReady}
                 >
-                    <Text style={styles.signInButtonText}>Sign In</Text>
+                    <Text style={styles.signInButtonText}>
+                        {authReady ? "Sign In" : "Loading..."}
+                    </Text>
                 </Pressable>
+
                 <Link href="/register" style={styles.registerLink}>
-    Create a new account
-</Link>
+                    Create a new account
+                </Link>
             </View>
         </View>
     );
@@ -213,11 +225,11 @@ const styles = StyleSheet.create({
         fontSize: 13,
         marginTop: 12,
     },
-registerLink: {
-    marginTop: 22,
-    color: "#5145E5",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-},
+    registerLink: {
+        marginTop: 22,
+        color: "#5145E5",
+        fontSize: 16,
+        fontWeight: "600",
+        textAlign: "center",
+    },
 });

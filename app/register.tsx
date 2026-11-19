@@ -15,9 +15,12 @@ export default function RegisterScreen() {
     const [error, setError] = useState("");
     //   const [success, setSuccess] = useState("");
     const router = useRouter();
-    const { registerAccount } = useDemoAuth();
-
-    const handleRegister = () => {
+    const { registerAccount, authReady } = useDemoAuth();
+    const handleRegister = async () => {
+        if (!authReady) {
+            setError("Please wait while accounts load.");
+            return;
+        }
         setError("");
 
         if (fullName.trim().length < 2) {
@@ -50,12 +53,27 @@ export default function RegisterScreen() {
         // setSuccess(
         //   `${role} registration form validated successfully!`
         // );
-        registerAccount({
-            fullName: fullName.trim(),
-            email: email.trim().toLowerCase(),
-            password,
-            role,
-        });
+
+        try {
+            await registerAccount({
+                fullName: fullName.trim(),
+                email: email.trim().toLowerCase(),
+                password,
+                role,
+            });
+
+            router.replace({
+                pathname: "/login",
+                params: { registered: "1" },
+            });
+        } catch (error) {
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Registration failed."
+            );
+        }
+
         router.replace({
             pathname: "/login",
             params: { registered: "1" },

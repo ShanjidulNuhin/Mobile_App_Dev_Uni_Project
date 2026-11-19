@@ -1,12 +1,14 @@
 
 import { useDemoAuth } from "@/context/demo-auth";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Tabs, useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { Tabs, usePathname, useRouter } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
+  BackHandler,
   Dimensions,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -27,6 +29,16 @@ type Destination =
   | "/moderator/reports"
   | "/moderator/history"
   | "/moderator/account";
+
+
+const TAB_PATHS: Destination[] = [
+  "/moderator",
+  "/moderator/verify",
+  "/moderator/reports",
+  "/moderator/history",
+  "/moderator/account",
+];
+
 
 type MenuItem = {
   title: string;
@@ -59,6 +71,17 @@ const MENU_ITEMS: MenuItem[] = [
 
 export default function ModeratorTabsLayout() {
   const router = useRouter();
+
+const pathname = usePathname();
+
+const tabHistory = useRef<Destination[]>([
+  "/moderator",
+]);
+
+const isDashboard =
+  pathname === "/moderator" ||
+  pathname === "/moderator/";
+
   const insets = useSafeAreaInsets();
   const { currentUser, logout } = useDemoAuth();
 
@@ -102,9 +125,65 @@ export default function ModeratorTabsLayout() {
     });
   };
 
+// Remember which Moderator tabs were visited.
+useEffect(() => {
+  if (!TAB_PATHS.includes(pathname as Destination)) {
+    return;
+  }
+
+  const currentTab = pathname as Destination;
+  const history = tabHistory.current;
+
+  if (history[history.length - 1] !== currentTab) {
+    history.push(currentTab);
+  }
+}, [pathname]);
+
+// Return to the previous Moderator tab.
+const handleBack = useCallback(() => {
+  const history = tabHistory.current;
+
+  if (history.length > 1) {
+    history.pop();
+  }
+
+  const previous =
+    history[history.length - 1] ?? "/moderator";
+
+  router.navigate(previous);
+}, [router]);
+
+// Handle the Android system Back button.
+useEffect(() => {
+  if (Platform.OS !== "android") {
+    return;
+  }
+
+  const subscription = BackHandler.addEventListener(
+    "hardwareBackPress",
+    () => {
+      // Allow Stack navigation to handle detail screens.
+      if (!TAB_PATHS.includes(pathname as Destination)) {
+        return false;
+      }
+
+      // Never go from Dashboard back to Login.
+      if (isDashboard) {
+        return true;
+      }
+
+      handleBack();
+      return true;
+    }
+  );
+
+  return () => subscription.remove();
+}, [pathname, isDashboard, handleBack]);
+
   return (
     <>
       <Tabs
+      backBehavior="none"
         screenOptions={{
           header: () => (
             <View
@@ -113,17 +192,37 @@ export default function ModeratorTabsLayout() {
                 { paddingTop: insets.top + 6 },
               ]}
             >
-              <Pressable
-                style={styles.headerButton}
-                onPress={() => setDrawerOpen(true)}
-                accessibilityLabel="Open menu"
-              >
-                <Ionicons
-                  name="menu-outline"
-                  size={28}
-                  color="#111827"
-                />
-              </Pressable>
+             
+<View style={styles.headerLeft}>
+  {!isDashboard && (
+    <Pressable
+      style={styles.headerButton}
+      onPress={handleBack}
+      accessibilityRole="button"
+      accessibilityLabel="Go back"
+    >
+      <Ionicons
+        name="arrow-back-outline"
+        size={25}
+        color="#111827"
+      />
+    </Pressable>
+  )}
+
+  <Pressable
+    style={styles.headerButton}
+    onPress={() => setDrawerOpen(true)}
+    accessibilityRole="button"
+    accessibilityLabel="Open menu"
+  >
+    <Ionicons
+      name="menu-outline"
+      size={28}
+      color="#111827"
+    />
+  </Pressable>
+</View>
+
 
               <Text style={styles.brandName}>
                 PathSathi
@@ -338,6 +437,11 @@ export default function ModeratorTabsLayout() {
 }
 
 const styles = StyleSheet.create({
+  headerLeft: {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 6,
+},
   header: {
     flexDirection: "row",
     alignItems: "center",
