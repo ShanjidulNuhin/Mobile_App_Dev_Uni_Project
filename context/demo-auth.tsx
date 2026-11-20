@@ -1,4 +1,3 @@
-
 import * as SecureStore from "expo-secure-store";
 import {
   createContext,
@@ -7,6 +6,7 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
+import { Platform } from "react-native";
 
 export type Role = "Student" | "Tutor" | "Moderator";
 
@@ -34,6 +34,34 @@ type AuthContextValue = {
 
 const STORAGE_KEY = "pathsathi-demo-accounts-v1";
 
+const getStoredData = async (
+  key: string
+): Promise<string | null> => {
+  if (Platform.OS === "web") {
+    if (typeof window === "undefined") return null;
+    return window.localStorage.getItem(key);
+  }
+
+  return SecureStore.getItemAsync(key);
+};
+
+const saveStoredData = async (
+  key: string,
+  value: string
+): Promise<void> => {
+  if (Platform.OS === "web") {
+    if (typeof window === "undefined") {
+      throw new Error("Browser storage is unavailable.");
+    }
+
+    window.localStorage.setItem(key, value);
+    return;
+  }
+
+  await SecureStore.setItemAsync(key, value);
+};
+
+
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function DemoAuthProvider({
@@ -50,9 +78,7 @@ export function DemoAuthProvider({
 
     const loadAccounts = async () => {
       try {
-        const saved = await SecureStore.getItemAsync(
-          STORAGE_KEY
-        );
+      const saved = await getStoredData(STORAGE_KEY);
 
         if (saved && active) {
           const parsed: unknown = JSON.parse(saved);
@@ -106,14 +132,12 @@ export function DemoAuthProvider({
     ];
 
 
-    await SecureStore.setItemAsync(
-      STORAGE_KEY,
-      JSON.stringify(updatedAccounts)
-    );
+    await saveStoredData(
+  STORAGE_KEY,
+  JSON.stringify(updatedAccounts)
+);
 
-    const savedData = await SecureStore.getItemAsync(
-      STORAGE_KEY
-    );
+    const savedData = await getStoredData(STORAGE_KEY);
 
     if (!savedData) {
       throw new Error(
